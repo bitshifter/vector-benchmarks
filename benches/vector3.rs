@@ -1,3 +1,4 @@
+#![feature(cfg_target_feature, target_feature)]
 extern crate vector_benchmarks;
 #[macro_use]
 extern crate bencher;
@@ -10,7 +11,7 @@ use stdsimd::simd::f32x4;
 
 use vector_benchmarks::{Vector3, dot_sse};
 
-const DEFAULT_NUM_ITERATIONS: u64 = 1_000_000_00;
+const DEFAULT_NUM_ITERATIONS: u64 = 1_000_000;
 
 fn num_iterations() -> u64 {
     match env::var("NUM_ITERATIONS") {
@@ -28,6 +29,8 @@ fn bench_f32(b: &mut Bencher) {
            });
 }
 
+#[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
+#[target_feature = "+sse4.1"]
 fn bench_f32_sse(b: &mut Bencher) {
     b.iter(|| {
                let a = f32x4::new(23.2, 39.1, 21.0, 0.0);
@@ -37,6 +40,8 @@ fn bench_f32_sse(b: &mut Bencher) {
            });
 }
 
+#[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
+#[target_feature = "+sse4.1"]
 fn bench_f32_sse_inline(b: &mut Bencher) {
     b.iter(|| {
         let a = f32x4::new(23.2, 39.1, 21.0, 0.0);

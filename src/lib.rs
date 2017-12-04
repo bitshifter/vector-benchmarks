@@ -36,10 +36,12 @@ pub struct Vector3<T: Num + Copy> {
 }
 
 impl<T: Num + Copy> Vector3<T> {
+    #[inline(always)]
     pub fn new(x: T, y: T, z: T) -> Self {
         Vector3 { x: x, y: y, z: z }
     }
 
+    #[inline(always)]
     pub fn dot(&self, other: &Vector3<T>) -> T {
         self.x * other.x + self.y * other.y + self.z * other.z
     }
@@ -47,12 +49,12 @@ impl<T: Num + Copy> Vector3<T> {
 
 #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
 #[target_feature = "+sse4.1"]
-#[inline]
+#[inline(always)]
 pub unsafe fn dot_sse(a: f32x4, b: f32x4) -> f32 {
     vendor::_mm_dp_ps(a, b, 0x71).extract(0)
 }
 
-#[inline]
+#[inline(always)]
 pub fn dot_f32_sse(a: &Vector3<f32>, b: &Vector3<f32>) -> f32 {
     let a = f32x4::new(a.x, a.y, a.z, 0.0);
     let b = f32x4::new(b.x, b.y, b.z, 0.0);
